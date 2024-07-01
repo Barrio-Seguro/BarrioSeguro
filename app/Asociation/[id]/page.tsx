@@ -1,23 +1,20 @@
-import { useRouter } from 'next/navigation';
-import { title } from "@/components/primitives";
-import { Option } from "@/components/Option";
-import { FaPeopleRoof } from "react-icons/fa6";
-import { FaBell } from "react-icons/fa";
-import { FaRegNewspaper } from "react-icons/fa6";
-import { BsPiggyBank } from "react-icons/bs";
-import { BsFillPiggyBankFill } from "react-icons/bs";
-import { GrUserPolice } from "react-icons/gr";
-import { Advertisement } from "@/components/Advertisement";
-import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+"use client";
 import { Asociation } from '@/components/Asociation';
+import { useEffect } from 'react';
 
-export default async function AsociationPage({params}: any) {
-	const { id } = params;
-    return (
-        <div className=" ">
-			<Asociation params={id} />
-        </div>
-    );
+export default function AsociationPage({ params }: any) {
+  const { id } = params;
+
+  useEffect(() => {
+    // Verificar que id no esté vacío o undefined antes de guardarlo
+    if (id) {
+      localStorage.setItem('associationId', id);
+    }
+  }, [id]);
+
+  return (
+    <div className=" ">
+      <Asociation id={id} />
+    </div>
+  );
 }

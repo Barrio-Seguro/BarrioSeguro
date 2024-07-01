@@ -5,13 +5,18 @@ import { useMemo, useState } from "react";
 import { useRouter } from 'next/navigation';
 
 export default function RegisterForm() {
-    const [email, setEmail] = useState("");
-    const [names, setNames] = useState("");
-    const [lastNames, setLastNames] = useState("");
-    const [dni, setDNI] = useState("");
-    const [address, setAddress] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [formData, setFormData] = useState({
+        email: "",
+        nombres: "",
+        apellidos: "",
+        dni: "",
+        direccion: "",
+        password: "",
+        confirmPassword: "",
+        num_celular: "",
+        genero: ""
+    });
+
     const router = useRouter();
 
     const validateEmail = (value: string) => value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i);
@@ -19,45 +24,58 @@ export default function RegisterForm() {
     const validatePasswordMatch = (password: string, confirmPassword: string) => password === confirmPassword;
 
     const isEmailInvalid = useMemo(() => {
-        if (email === "") return false;
-        return validateEmail(email) ? false : true;
-    }, [email]);
+        if (formData.email === "") return false;
+        return validateEmail(formData.email) ? false : true;
+    }, [formData.email]);
 
     const isDNIInvalid = useMemo(() => {
-        if (dni === "") return false;
-        return validateDNI(dni) ? false : true;
-    }, [dni]);
+        if (formData.dni === "") return false;
+        return validateDNI(formData.dni) ? false : true;
+    }, [formData.dni]);
 
     const isPasswordMatchInvalid = useMemo(() => {
-        if (password === "" || confirmPassword === "") return false;
-        return validatePasswordMatch(password, confirmPassword) ? false : true;
-    }, [password, confirmPassword]);
+        if (formData.password === "" || formData.confirmPassword === "") return false;
+        return validatePasswordMatch(formData.password, formData.confirmPassword) ? false : true;
+    }, [formData.password, formData.confirmPassword]);
 
-    const handleCreateAccount = () => {
-        const userData = {
-            names,
-            lastNames,
-            dni,
-            address,
-            email,
-            password
-        };
-        localStorage.setItem('userData', JSON.stringify(userData));
-        //redirigir a la página de inicio de sesión
-        router.push('/Actions');
-        
+    const handleCreateAccount = async () => {
+        try {
+            const headers = new Headers();
+            headers.append('accept', 'application/json');
+            headers.append('access_token', process.env.NEXT_PUBLIC_BACKEND_API_KEY || ''); // Asegúrate de manejar el caso donde process.env.NEXT_PUBLIC_BACKEND_API_KEY sea undefined
+            headers.append('Content-Type', 'application/json');
+            
+            const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/vecinos', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al registrar');
+            }
+
+            // Redirigir a otra página después del registro exitoso
+            router.push('/registro-completado'); // Cambia la ruta según tu aplicación
+
+        } catch (error) {
+            console.error('Error al registrar:', error);
+            // Aquí puedes manejar el error, como mostrar un mensaje al usuario
+        }
     };
 
     return (
         <>
             <div className="flex w-full flex-wrap gap-6">
-                <Input type="text"  label="Nombres" value={names} onValueChange={setNames} />
-                <Input type="text" label="Apellidos" value={lastNames} onValueChange={setLastNames} />
-                <Input type="text" label="DNI" value={dni} isInvalid={isDNIInvalid} errorMessage={isDNIInvalid && "Please enter a valid DNI"} onValueChange={setDNI} />
-                <Input type="text" label="Dirección" value={address} onValueChange={setAddress} />
-                <Input type="email" label="Email" value={email} isInvalid={isEmailInvalid} errorMessage={isEmailInvalid && "Please enter a valid email"} onValueChange={setEmail} />
-                <Input type="password" label="Contraseña" value={password} onValueChange={setPassword} />
-                <Input type="password" label="Confirmar Contraseña" value={confirmPassword} isInvalid={isPasswordMatchInvalid} errorMessage={isPasswordMatchInvalid && "Passwords do not match"} onValueChange={setConfirmPassword} />
+                <Input type="text" label="Nombres" value={formData.nombres} onValueChange={(value) => setFormData({ ...formData, nombres: value })} />
+                <Input type="text" label="Apellidos" value={formData.apellidos} onValueChange={(value) => setFormData({ ...formData, apellidos: value })} />
+                <Input type="text" label="DNI" value={formData.dni} isInvalid={isDNIInvalid} errorMessage={isDNIInvalid && "Ingrese un DNI válido"} onValueChange={(value) => setFormData({ ...formData, dni: value })} />
+                <Input type="text" label="Dirección" value={formData.direccion} onValueChange={(value) => setFormData({ ...formData, direccion: value })} />
+                <Input type="email" label="Email" value={formData.email} isInvalid={isEmailInvalid} errorMessage={isEmailInvalid && "Ingrese un correo válido"} onValueChange={(value) => setFormData({ ...formData, email: value })} />
+                <Input type="password" label="Contraseña" value={formData.password} onValueChange={(value) => setFormData({ ...formData, password: value })} />
+                <Input type="password" label="Confirmar Contraseña" value={formData.confirmPassword} isInvalid={isPasswordMatchInvalid} errorMessage={isPasswordMatchInvalid && "Las contraseñas no coinciden"} onValueChange={(value) => setFormData({ ...formData, confirmPassword: value })} />
+                <Input type="text" label="Número de Celular" value={formData.num_celular} onValueChange={(value) => setFormData({ ...formData, num_celular: value })} />
+                <Input type="text" label="Género" value={formData.genero} onValueChange={(value) => setFormData({ ...formData, genero: value })} />
             </div>
             <Button className="mt-12 mb-2 px-24 py-6 bg-[#38A911]" onPress={handleCreateAccount}>
                 <p className="text-lg">

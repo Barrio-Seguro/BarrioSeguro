@@ -1,15 +1,18 @@
 "use client"
 import { useState } from 'react';
-import CodeGenerator from '@/components/CodeGenerator';
 import { Input } from '@nextui-org/input';
 import { FaPencilAlt } from 'react-icons/fa';
 import { FaHome } from "react-icons/fa";
 import { TiLocation } from "react-icons/ti";
 import Image from 'next/image';
+import CodeGenerator from '@/components/CodeGenerator';
 
 export default function GenerateCodePage() {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
+  const [district, setDistrict] = useState('');
+  const [province, setProvince] = useState('');
+  const [creatorName, setCreatorName] = useState('');
   const [editingImage, setEditingImage] = useState(false);
 
   const handleImageClick = () => {
@@ -49,13 +52,40 @@ export default function GenerateCodePage() {
         label="Dirección"
         value={address}
         onValueChange={setAddress}
-        
         startContent={
           <TiLocation className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
         }
         className='w-full'
       />
-      {name ? <CodeGenerator associationName={name}  /> : null}
+      <Input
+        type="text"
+        label="Distrito"
+        value={district}
+        onValueChange={setDistrict}
+        className='w-full'
+      />
+      <Input
+        type="text"
+        label="Provincia"
+        value={province}
+        onValueChange={setProvince}
+        className='w-full'
+      />
+      <Input
+        type="text"
+        label="Nombre del Creador"
+        value={creatorName}
+        onValueChange={setCreatorName}
+        className='w-full'
+      />
+      {name && district && province && creatorName ? (
+        <CodeGenerator
+          associationName={name}
+          district={district}
+          province={province}
+          creatorName={creatorName}
+        />
+      ) : null}
     </div>
   );
 }

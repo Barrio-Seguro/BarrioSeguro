@@ -21,10 +21,10 @@ const Staff: React.FC<StaffProps> = ({
     position
 }) => {
     return (
-        <div className="text-black flex bg-white rounded-md shadow-md py-6 px-4 mb-4 w-80">
+        <div className="text-black flex bg-white rounded-xl shadow-md py-6 px-4 mb-4 w-80 border-2 border-[#115DA9]">
             <div className="flex-none w-24 h-24 object-cover">
                 <Image
-                    src={imageUrl || '/default-profile.jpg'} // Coloca aquí la ruta de tu imagen por defecto
+                    src={imageUrl || '/default-profile.jpg'}
                     alt="Profile"
                     width={100}
                     height={100}
@@ -45,12 +45,13 @@ const Staff: React.FC<StaffProps> = ({
                     <p>
                         <span className="font-bold">Teléfono:</span> {phone}
                     </p>
-                    <p>
-                        {schedule ?  <span className="font-bold">Horario: {schedule}</span>  : null}
-                       
-                    </p>
+                    {schedule && (
+                        <p>
+                            <span className="font-bold">Horario:</span> {schedule}
+                        </p>
+                    )}
                 </div>
-                <button className="flex items-center bg-blue-500 text-white py-2 px-4 rounded-md">
+                <button className="flex items-center bg-[#115DA9] text-white py-2 px-4 rounded-md">
                     <AiFillPhone className="mr-2" />
                     Llamar
                 </button>
@@ -60,3 +61,4 @@ const Staff: React.FC<StaffProps> = ({
 };
 
 export default Staff;
+
