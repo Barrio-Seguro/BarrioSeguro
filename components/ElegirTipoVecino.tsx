@@ -1,9 +1,25 @@
-import { FaUserPlus, FaCog } from 'react-icons/fa'; // ejemplo de importacion de iconos, mas informacion en  https://react-icons.github.io/react-icons/
+// src/components/ElegirTipoVecino.tsx
+'use client';  // Añadir esta línea
 
-export default function ElegirTipoVecino() {
-    return (
-        <div className="">
-            Ustedes Pueden: Esther y Jim
-        </div>
-    );
+import React from 'react';
+
+interface ElegirTipoVecinoProps {
+  type: string;
+  label: string;
+  icon: React.ReactNode;
+  onClick: (type: string) => void;
 }
+
+const ElegirTipoVecino: React.FC<ElegirTipoVecinoProps> = ({ type, label, icon, onClick }) => {
+  return (
+    <button
+      onClick={() => onClick(type)}
+      className="p-4 bg-green-500 text-white rounded-lg shadow-md flex flex-col items-center justify-center hover:bg-green-600"
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
+};
+
+export default ElegirTipoVecino;
